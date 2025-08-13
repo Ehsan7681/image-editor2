@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="theme-color" content="#7c3aed">
+	<title>ویرایشگر عکس مدرن</title>
+	
+	<!-- PWA Manifest -->
+	<link rel="manifest" href="manifest.json">
+	
+	<!-- Favicon -->
+	<link rel="icon" type="image/x-icon" href="icons/favicon.ico">
+	<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+	
+	<!-- Apple Touch Icon -->
+	<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+	
+	<!-- Android Chrome Icon -->
+	<link rel="icon" type="image/png" sizes="192x192" href="icons/android-chrome-192x192.png">
+	
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header class="app-header">
+		<div class="brand">
+			<span class="brand-logo">🖼️</span>
+			<h1>ویرایشگر عکس مدرن</h1>
+		</div>
+		<div class="header-actions">
+			<button id="undoBtn" class="icon-btn" title="بازگردانی (Ctrl+Z)">↶</button>
+			<button id="redoBtn" class="icon-btn" title="اعاده (Ctrl+Y)">↷</button>
+			<button id="themeToggle" class="icon-btn" title="تغییر تم">🌙</button>
+		</div>
+	</header>
+
+	<main class="app-main">
+		<aside class="sidebar">
+			<section class="panel">
+				<div class="panel-header" data-target="#uploadPanel">بارگذاری تصویر</div>
+				<div id="uploadPanel" class="panel-body open">
+					<div id="uploadArea" class="upload-area">
+						<input type="file" id="fileInput" accept="image/*" hidden>
+						<div class="upload-icon">📁</div>
+						<p>برای انتخاب کلیک کنید یا فایل را بکشید و رها کنید</p>
+					</div>
+					<div class="meta">
+						<div id="metaDimensions">ابعاد: -</div>
+						<div id="metaSize">حجم تقریبی: -</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header" data-target="#adjustPanel">تنظیمات تصویر</div>
+				<div id="adjustPanel" class="panel-body">
+					<div class="control">
+						<label for="brightness">سطوع <span id="brightnessVal">100%</span></label>
+						<input type="range" id="brightness" min="0" max="200" value="100">
+					</div>
+					<div class="control">
+						<label for="contrast">کنتراست <span id="contrastVal">100%</span></label>
+						<input type="range" id="contrast" min="0" max="200" value="100">
+					</div>
+					<div class="control">
+						<label for="saturation">اشباع رنگ <span id="saturationVal">100%</span></label>
+						<input type="range" id="saturation" min="0" max="200" value="100">
+					</div>
+					<div class="control">
+						<label for="blur">تاری <span id="blurVal">0px</span></label>
+						<input type="range" id="blur" min="0" max="20" value="0">
+					</div>
+					<div class="control">
+						<label for="hue">Hue <span id="hueVal">0°</span></label>
+						<input type="range" id="hue" min="-180" max="180" value="0">
+					</div>
+					<div class="control">
+						<label for="sepia">Sepia <span id="sepiaVal">0%</span></label>
+						<input type="range" id="sepia" min="0" max="100" value="0">
+					</div>
+					<button id="resetFiltersBtn" class="btn ghost">بازنشانی فیلترها</button>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header" data-target="#transformPanel">تبدیل‌ها</div>
+				<div id="transformPanel" class="panel-body">
+					<div class="control">
+						<label for="rotate">چرخش <span id="rotateVal">0°</span></label>
+						<input type="range" id="rotate" min="-180" max="180" value="0">
+					</div>
+					<div class="btn-group">
+						<button id="rotateLeftBtn" class="btn">↺ 90°</button>
+						<button id="rotateRightBtn" class="btn">↻ 90°</button>
+					</div>
+					<div class="btn-group">
+						<button id="flipXBtn" class="btn ghost">↔ برعکس افقی</button>
+						<button id="flipYBtn" class="btn ghost">↕ برعکس عمودی</button>
+					</div>
+					<div class="crop-section">
+						<div class="section-title">کراپ تصویر</div>
+						<div class="btn-group">
+							<button id="startCropBtn" class="btn warn">شروع کراپ</button>
+							<button id="applyCropBtn" class="btn success" disabled>اعمال</button>
+							<button id="cancelCropBtn" class="btn ghost" disabled>لغو</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header" data-target="#resizePanel">تغییر ابعاد</div>
+				<div id="resizePanel" class="panel-body">
+					<div class="resize-section">
+						<div class="section-title">تغییر اندازه</div>
+						<div class="input-group">
+							<input id="resizeWidth" type="number" placeholder="عرض" min="1">
+							<input id="resizeHeight" type="number" placeholder="طول" min="1">
+						</div>
+						<div class="checkbox-row">
+							<label class="checkbox"><input id="keepRatio" type="checkbox" checked> حفظ نسبت</label>
+						</div>
+						<div class="preset-grid">
+							<button class="chip" data-preset="1:1">1:1</button>
+							<button class="chip" data-preset="4:3">4:3</button>
+							<button class="chip" data-preset="16:9">16:9</button>
+							<button class="chip" data-preset="9:16">9:16</button>
+						</div>
+						<div class="btn-group">
+							<button id="applyResizeBtn" class="btn primary">اعمال ابعاد</button>
+							<button id="downloadResizeBtn" class="btn success">دانلود</button>
+						</div>
+					</div>
+					
+					<div class="divider"></div>
+					
+					<div class="multi-section">
+						<div class="section-title">خروجی چندتایی</div>
+						<div class="input-group">
+							<input id="dimWidth" type="number" placeholder="عرض" min="1">
+							<input id="dimHeight" type="number" placeholder="طول" min="1">
+							<button id="addDimBtn" class="btn ghost">افزودن</button>
+						</div>
+						<div class="checkbox-row">
+							<label class="checkbox"><input id="keepRatioMulti" type="checkbox" checked> حفظ نسبت</label>
+						</div>
+						<div id="dimList" class="dim-list"></div>
+						<div class="btn-group">
+							<button id="clearDimsBtn" class="btn ghost">پاک‌کردن</button>
+							<button id="exportMultiBtn" class="btn">خروجی چندتایی</button>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header" data-target="#exportPanel">کیفیت و خروجی</div>
+				<div id="exportPanel" class="panel-body">
+					<div class="export-section">
+						<div class="section-title">تنظیم کیفیت</div>
+						<div class="input-group">
+							<input id="targetKB" type="number" placeholder="حجم هدف (KB)" min="1">
+							<button id="applyQualityBtn" class="btn ghost">اعمال کیفیت</button>
+						</div>
+					</div>
+					
+					<div class="divider"></div>
+					
+					<div class="export-section">
+						<div class="section-title">خروجی اصلی</div>
+						<div class="input-group">
+							<label for="format">فرمت:</label>
+							<select id="format">
+								<option value="jpeg">JPG</option>
+								<option value="png">PNG</option>
+								<option value="webp">WEBP</option>
+							</select>
+						</div>
+						<div class="btn-group">
+							<button id="downloadBtn" class="btn primary">دانلود</button>
+							<button id="resetAllBtn" class="btn ghost">بازنشانی همه</button>
+						</div>
+					</div>
+					
+					<div class="divider"></div>
+					
+					<div class="export-section">
+						<div class="section-title">ابزارها</div>
+						<div class="btn-group">
+							<button id="testStorageBtn" class="btn ghost">تست ذخیره‌سازی</button>
+						</div>
+					</div>
+				</div>
+			</section>
+		</aside>
+
+		<section class="stage">
+			<div class="canvas-wrap" id="canvasWrap">
+				<canvas id="canvas"></canvas>
+				<div id="placeholder" class="placeholder">عکسی بارگذاری نشده است</div>
+				<canvas id="cropOverlay" class="crop-overlay" hidden></canvas>
+			</div>
+		</section>
+	</main>
+
+
+
+	<script src="app.js"></script>
+	
+	<!-- Service Worker Registration -->
+	<script>
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', () => {
+				navigator.serviceWorker.register('./sw.js')
+					.then(registration => {
+						console.log('SW registered: ', registration);
+					})
+					.catch(registrationError => {
+						console.log('SW registration failed: ', registrationError);
+					});
+			});
+		}
+	</script>
+</body>
+</html>
+
+
