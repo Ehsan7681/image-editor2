@@ -14,7 +14,8 @@
 
 * { box-sizing: border-box; }
 html, body { 
-	height: 100%; 
+	height: 100%;
+	max-height: 100%;
 	-webkit-text-size-adjust: 100%;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -28,6 +29,8 @@ body {
 	display: grid;
 	grid-template-rows: auto 1fr auto;
 	overflow-x: hidden;
+	overflow-y: auto;
+	height: auto;
 }
 
 [data-theme="light"] body {
@@ -376,8 +379,8 @@ canvas { max-width: 100%; max-height: 70vh; }
 	
 	.sidebar {
 		order: 2;
-		max-height: none;
-		overflow-y: visible;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	
 	.stage {
@@ -391,16 +394,19 @@ canvas { max-width: 100%; max-height: 70vh; }
 	.panel-body {
 		padding: 12px;
 		gap: 12px;
-		max-height: none;
 		overflow-y: visible;
+		display: none;
+		height: auto;
 	}
 	
 	/* اطمینان از نمایش صحیح پنل‌ها */
-	.panel-body:not(.open) {
-		display: none;
+	.panel-body.open {
+		display: flex;
+		flex-direction: column;
 	}
 	
-	.panel-body.open {
+	/* پنل اول (بارگذاری تصویر) به طور پیش‌فرض باز باشد */
+	#uploadPanel {
 		display: flex;
 		flex-direction: column;
 	}
@@ -409,6 +415,7 @@ canvas { max-width: 100%; max-height: 70vh; }
 		padding: 12px 16px;
 		font-size: 14px;
 		border-radius: 12px;
+		min-height: 44px; /* اندازه مناسب برای لمس */
 	}
 	
 	.btn-group {
@@ -423,6 +430,7 @@ canvas { max-width: 100%; max-height: 70vh; }
 		padding: 12px 14px;
 		font-size: 16px; /* جلوگیری از زوم در iOS */
 		border-radius: 12px;
+		min-height: 44px; /* اندازه مناسب برای لمس */
 	}
 	
 	.control input[type=range] {
@@ -430,14 +438,15 @@ canvas { max-width: 100%; max-height: 70vh; }
 	}
 	
 	.control input[type=range]::-webkit-slider-thumb {
-		width: 20px;
-		height: 20px;
+		width: 24px;
+		height: 24px;
 	}
 	
 	.chip {
 		padding: 12px 16px;
 		font-size: 14px;
 		border-radius: 12px;
+		min-height: 44px; /* اندازه مناسب برای لمس */
 	}
 	
 	.preset-grid {
@@ -460,8 +469,15 @@ canvas { max-width: 100%; max-height: 70vh; }
 	.icon-btn {
 		padding: 12px 14px;
 		font-size: 18px;
+		min-width: 44px;
+		min-height: 44px;
 	}
 	
+	.panel-header {
+		padding: 14px 16px;
+		font-size: 16px;
+		min-height: 44px;
+	}
 
 }
 
@@ -470,18 +486,28 @@ canvas { max-width: 100%; max-height: 70vh; }
 	.app-main {
 		padding: 8px;
 		gap: 8px;
+		grid-template-columns: 1fr;
+		height: auto;
 	}
 	
 	.panel-body {
 		padding: 12px;
 		gap: 12px;
-		max-height: none;
 		overflow-y: visible;
+		display: none;
+		height: auto;
+	}
+	
+	/* پنل اول (بارگذاری تصویر) به طور پیش‌فرض باز باشد */
+	#uploadPanel {
+		display: flex;
+		flex-direction: column;
 	}
 	
 	/* بهبود نمایش پنل‌ها در موبایل */
 	.panel {
 		margin-bottom: 8px;
+		height: auto;
 	}
 	
 	.panel-header {
@@ -525,11 +551,12 @@ canvas { max-width: 100%; max-height: 70vh; }
 	}
 	
 	.canvas-wrap {
-		min-height: 280px;
+		height: auto;
 	}
 	
 	.app-header {
 		padding: 14px 16px;
+		height: auto;
 	}
 	
 	.brand h1 {
@@ -537,7 +564,9 @@ canvas { max-width: 100%; max-height: 70vh; }
 	}
 	
 	.sidebar {
-		max-height: 65vh;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		max-height: 100%;
 	}
 	
 	.panel {
@@ -607,5 +636,3 @@ canvas { max-width: 100%; max-height: 70vh; }
 	
 
 }
-
-
