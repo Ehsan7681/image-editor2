@@ -151,6 +151,7 @@ class ModernImageEditor {
 		// کیفیت و خروجی
 		this.q('#applyQualityBtn').addEventListener('click', () => this.applyQuality());
 		this.q('#downloadBtn').addEventListener('click', () => this.download());
+		this.q('#downloadQualityBtn').addEventListener('click', () => this.downloadQuality());
 		this.q('#format').addEventListener('change', () => this.renderDimList());
 
 		// چندتایی
@@ -570,6 +571,18 @@ class ModernImageEditor {
 		this.persist();
 	}
 
+	downloadQuality() {
+		const kb = parseInt(this.q('#targetKB').value,10); if (!kb || kb <= 0) return;
+		const approxKB = Math.max(1, Math.round(this.canvas.toDataURL('image/jpeg', 1).length * 0.75 / 1024));
+		const quality = clamp(kb / approxKB, 0.1, 1);
+		
+		if (!this.imageBitmap) return;
+		const fmt = this.q('#format').value;
+		const mime = fmt === 'png' ? 'image/png' : (fmt === 'webp' ? 'image/webp' : 'image/jpeg');
+		const url = this.canvas.toDataURL(mime, quality);
+		const a = document.createElement('a'); a.href = url; a.download = `edited-${kb}kb.${fmt==='jpeg'?'jpg':fmt}`; a.click();
+	}
+
 	download() {
 		if (!this.imageBitmap) return;
 		const fmt = this.q('#format').value;
@@ -855,5 +868,3 @@ window.addEventListener('DOMContentLoaded', () => {
 	
 	new ModernImageEditor();
 });
-
-
